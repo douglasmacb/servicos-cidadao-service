@@ -5,20 +5,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import br.gov.mg.bomdestino.servicos.servicoscidadaoservice.model.Solicitacao;
-import br.gov.mg.bomdestino.servicos.servicoscidadaoservice.model.Status;
 
 public class SolicitacaoDto {
 
 	private Long id;
 	private String descricao;
 	private LocalDate data;
-	private Status status;
-	
+	private String status;
+	private String servico;
+	private int protocolo;
+
 	public SolicitacaoDto(Solicitacao solicitacao) {
-		this.setId(solicitacao.getId());
-		this.setData(solicitacao.getData());
-		this.setDescricao(solicitacao.getDescricao());
-		this.setStatus(solicitacao.getStatus());
+		setId(solicitacao.getId());
+		setData(solicitacao.getData());
+		setDescricao(solicitacao.getDescricao());
+		setStatus(solicitacao.getStatus().getNome());
+		setProtocolo(solicitacao.getProtocolo());
+		setServico(solicitacao.getServico().getNome());
 	}
 
 	public Long getId() {
@@ -49,12 +52,28 @@ public class SolicitacaoDto {
 		this.descricao = descricao;
 	}
 
-	public Status getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(Status status) {
+	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public int getProtocolo() {
+		return protocolo;
+	}
+
+	public void setProtocolo(int protocolo) {
+		this.protocolo = protocolo;
+	}
+
+	public String getServico() {
+		return servico;
+	}
+
+	public void setServico(String servico) {
+		this.servico = servico;
 	}
 
 }

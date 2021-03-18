@@ -22,10 +22,8 @@ import br.gov.mg.bomdestino.servicos.servicoscidadaoservice.controller.dto.Solic
 import br.gov.mg.bomdestino.servicos.servicoscidadaoservice.controller.form.SolicitacaoForm;
 import br.gov.mg.bomdestino.servicos.servicoscidadaoservice.model.Solicitacao;
 import br.gov.mg.bomdestino.servicos.servicoscidadaoservice.model.Status;
-import br.gov.mg.bomdestino.servicos.servicoscidadaoservice.repository.EnderecoRepository;
 import br.gov.mg.bomdestino.servicos.servicoscidadaoservice.repository.ServicoRepository;
 import br.gov.mg.bomdestino.servicos.servicoscidadaoservice.repository.SolicitacaoRepository;
-import br.gov.mg.bomdestino.servicos.servicoscidadaoservice.repository.SolicitanteRepository;
 import br.gov.mg.bomdestino.servicos.servicoscidadaoservice.repository.StatusRepository;
 
 @RestController
@@ -36,16 +34,10 @@ public class SolicitacaoController {
 	private SolicitacaoRepository solicitacaoRepository;
 	
 	@Autowired
-	private SolicitanteRepository solicitanteRepository;
-	
-	@Autowired
 	private ServicoRepository servicoRepository;
 	
 	@Autowired
 	private StatusRepository statusRepository;
-	
-	@Autowired
-	private EnderecoRepository enderecoRepository;
 	
 	@GetMapping
 	public List<SolicitacaoDto> lista() {
@@ -58,6 +50,15 @@ public class SolicitacaoController {
 		Optional<Solicitacao> solicitacao = solicitacaoRepository.findById(id);
 		if(solicitacao.isPresent()) {
 			return ResponseEntity.ok().body(new SolicitacaoDto(solicitacao.get()));
+		}
+		return ResponseEntity.accepted().build();
+	}
+	
+	@GetMapping("/protocol/{protocol}")
+	public ResponseEntity<Solicitacao> buscarPorProtocolo(@PathVariable int protocol) {
+		Optional<Solicitacao> solicitacao = solicitacaoRepository.findByProtocolo(protocol);
+		if(solicitacao.isPresent()) {
+			return ResponseEntity.ok().body(solicitacao.get());
 		}
 		return ResponseEntity.accepted().build();
 	}
@@ -100,12 +101,13 @@ public class SolicitacaoController {
 	
 	@PostMapping
 	public ResponseEntity<SolicitacaoDto> cadastrar(@RequestBody @Valid SolicitacaoForm form, UriComponentsBuilder uriBuilder) {
-		Solicitacao solicitacao = form.converter(solicitanteRepository, servicoRepository, statusRepository, enderecoRepository);
-		solicitacaoRepository.save(solicitacao);
-		URI uri = uriBuilder.path("/solicitacao/{id}").buildAndExpand(solicitacao.getId()).toUri();
-		return ResponseEntity.created(uri).body(new SolicitacaoDto(solicitacao));
+		Solicitacao solicitacao = form.converter(servicoRepository, statusRepository);
+		if(solicitacao != null) {
+			solicitacaoRepository.save(solicitacao);
+			URI uri = uriBuilder.path("/solicitacao/{id}").buildAndExpand(solicitacao.getId()).toUri();
+			return ResponseEntity.created(uri).body(new SolicitacaoDto(solicitacao));
+		}
+		return ResponseEntity.badRequest().build();
 	}
-	
-	
 	
 }

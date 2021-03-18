@@ -1,6 +1,7 @@
 package br.gov.mg.bomdestino.servicos.servicoscidadaoservice.model;
 
 import java.time.LocalDate;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,7 +9,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import br.gov.mg.bomdestino.servicos.servicoscidadaoservice.controller.form.SolicitacaoForm;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Solicitacao {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,86 +31,30 @@ public class Solicitacao {
 	private Status status;
 	
 	@ManyToOne
-	private Solicitante solicitante;
-	
-	@ManyToOne
-	private Endereco endereco;
-	
-	@ManyToOne
 	private Servico servico;
 	
-	public Solicitacao() {}
-
-	public Solicitacao(String descricao, Status status, Servico servico, Endereco endereco, Solicitante solicitante) {
-		this.descricao = descricao;
-		this.solicitante = solicitante;
-		this.servico = servico;
-		this.setStatus(status);
-		this.endereco = endereco;
-	}
-
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return the descricao
-	 */
-	public String getDescricao() {
-		return descricao;
-	}
-
-	/**
-	 * @param descricao the descricao to set
-	 */
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
-
-	/**
-	 * @return the data
-	 */
-	public LocalDate getData() {
-		return data;
-	}
-
-	/**
-	 * @param data the data to set
-	 */
-	public void setData(LocalDate data) {
-		this.data = data;
-	}
-
-
-	/**
-	 * @return the solicitante
-	 */
-	public Solicitante getSolicitante() {
-		return solicitante;
-	}
-
-	/**
-	 * @param solicitante the solicitante to set
-	 */
-	public void setSolicitante(Solicitante solicitante) {
-		this.solicitante = solicitante;
-	}
-
-	public Status getStatus() {
-		return status;
-	}
-
-	public void setStatus(Status status) {
-		this.status = status;
+	private String nomeSolicitante;
+	private String telefoneSolicitante;
+	private String cpfSolicitante;
+	private String emailSolicitante;
+	private String logradouro;
+	private int numero;
+	private String cep;
+	private String cidade;
+	private String estado;
+	private int protocolo;
+	
+	public Solicitacao(SolicitacaoForm form) {
+		setCep(form.getCep());
+		setNomeSolicitante(form.getNomeSolicitante());
+		setTelefoneSolicitante(form.getTelefoneSolicitante());
+		setCpfSolicitante(form.getCpfSolicitante());
+		setEmailSolicitante(form.getEmailSolicitante());
+		setLogradouro(form.getLogradouro());
+		setNumero(form.getNumero());
+		setCidade(form.getCidade());
+		setEstado(form.getEstado());
+		setDescricao(form.getDescricao());
+		setProtocolo(ThreadLocalRandom.current().nextInt(99999999));
 	}
 }
